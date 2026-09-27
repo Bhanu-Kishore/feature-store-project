@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Feast generated files
+data/registry.db
+data/online_store.db
+
+# Generated feature data
+data/features.parquet
+data/training_dataset.parquet
+
+# DVC cache
+.dvc/cache/
+
+# Environment
+.env
