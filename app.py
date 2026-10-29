@@ -1,103 +1,76 @@
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from feast import FeatureStore
 import mlflow.sklearn
 import pandas as pd
 
-
 app = FastAPI(
-    title="Feature Store Prediction API",
-    description="FastAPI + Feast + MLflow demonstration",
-    version="1.0"
+    title="Customer Churn Prediction API",
+    description="Feast + MLflow + FastAPI customer churn demonstration",
+    version="2.0",
 )
 
-
-# Feast
 store = FeatureStore(repo_path=".")
 
-
-# MLflow model
-MODEL_URI = "runs:/4c4ec1b4ee6f4063ba8af192f11ed803/model"
+# New customer churn model logged in MLflow
+MODEL_URI = "runs:/d38dea83b0c142a6be4790c017a1923e/model"
 model = mlflow.sklearn.load_model(MODEL_URI)
 
-
-# Request schema
 class PredictionRequest(BaseModel):
-    user_id: str
-
+    customer_id: str
 
 @app.get("/")
 def root():
-    return {
-        "message": "Feature Store Prediction API is running"
-    }
-
+    return {"message": "Customer Churn Prediction API is running"}
 
 @app.get("/health")
 def health():
-    return {
-        "status": "ok"
-    }
-
+    return {"status": "ok"}
 
 @app.post("/predict")
 def predict(request: PredictionRequest):
-
     try:
-        # Retrieve features from Feast Online Store
+        # Retrieve customer features from Feast's online store
         feature_response = store.get_online_features(
             features=[
-                "user_activity_features:transaction_count_7d",
-                "user_activity_features:avg_transaction_amount_7d",
-                "user_activity_features:total_spend_30d",
-                "user_activity_features:avg_session_duration_7d",
-                "user_activity_features:days_since_last_transaction",
+                "customer_features:tenure",
+                "customer_features:monthly_charges",
+                "customer_features:total_charges",
+                "customer_features:senior_citizen",
             ],
-            entity_rows=[
-                {"user_id": request.user_id}
-            ],
+            entity_rows=[{"customer_id": request.customer_id}],
         ).to_dict()
 
-        # Check whether user exists
-        if feature_response["user_id"][0] is None:
+        # Check whether the customer exists
+        if feature_response["tenure"][0] is None:
             raise HTTPException(
                 status_code=404,
-                detail="User features not found"
+                detail="Customer features not found. Check the customer ID and Feast materialization.",
             )
 
-        # Convert Feast response to DataFrame
         features = pd.DataFrame({
-            "transaction_count_7d": [
-                feature_response["transaction_count_7d"][0]
-            ],
-            "avg_transaction_amount_7d": [
-                feature_response["avg_transaction_amount_7d"][0]
-            ],
-            "total_spend_30d": [
-                feature_response["total_spend_30d"][0]
-            ],
-            "avg_session_duration_7d": [
-                feature_response["avg_session_duration_7d"][0]
-            ],
-            "days_since_last_transaction": [
-                feature_response["days_since_last_transaction"][0]
-            ],
+            "tenure": [feature_response["tenure"][0]],
+            "monthly_charges": [feature_response["monthly_charges"][0]],
+            "total_charges": [feature_response["total_charges"][0]],
+            "senior_citizen": [feature_response["senior_citizen"][0]],
         })
 
-        # Model prediction
-        prediction = model.predict(features)[0]
+        prediction = int(model.predict(features)[0])
+
+        result = {
+            0: "No churn — customer stayed",
+            1: "Churn — customer left",
+        }
 
         return {
-            "user_id": request.user_id,
+            "customer_id": request.customer_id,
             "features": features.iloc[0].to_dict(),
-            "prediction": int(prediction)
+            "prediction": prediction,
+            "prediction_label": result[prediction],
         }
 
     except HTTPException:
         raise
-
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=500, detail=str(e))

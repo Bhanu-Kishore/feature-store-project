@@ -21,3 +21,9 @@ data/training_dataset.parquet
 
 # Environment
 .env
+
+# Kaggle customer churn dataset and generated files
+data/telco_customer_churn.csv
+data/telco_cleaned.csv
+data/telco_features.parquet
+data/telco_training_dataset.parquet
