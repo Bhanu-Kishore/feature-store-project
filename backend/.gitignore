@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# MLflow local state
+mlruns/
+mlflow.db
+
+# Feast generated state
+data/registry.db
+data/online_store.db
+
+# Generated feature data (rebuilt from data/telco_customer_churn.csv)
+data/features.parquet
+data/training_dataset.parquet
+data/telco_cleaned.csv
+data/telco_features.parquet
+data/telco_training_dataset.parquet
+
+# DVC cache
+.dvc/cache/
+
+# Environment
+.env

@@ -3,27 +3,49 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+.pytest_cache/
 
-# MLflow
-mlruns/
-mlflow.db
+# Environment files
+.env
+.env.*
+!.env.example
 
-# Feast generated files
-data/registry.db
-data/online_store.db
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
 
-# Generated feature data
-data/features.parquet
-data/training_dataset.parquet
+# MLflow local state
+backend/mlruns/
+backend/mlflow.db
+
+# Feast generated state
+backend/data/registry.db
+backend/data/online_store.db
+
+# Generated feature data (rebuilt by prepare_data.py / build_features.py)
+backend/data/telco_cleaned.csv
+backend/data/telco_features.parquet
+backend/data/telco_training_dataset.parquet
+backend/data/features.parquet
+backend/data/training_dataset.parquet
 
 # DVC cache
-.dvc/cache/
+backend/.dvc/cache/
 
-# Environment
-.env
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
 
-# Kaggle customer churn dataset and generated files
-data/telco_customer_churn.csv
-data/telco_cleaned.csv
-data/telco_features.parquet
-data/telco_training_dataset.parquet
+# Azure deployment state (contains credentials/tokens)
+.azure-deployment.env
+.azure-credentials.json
+infra/.deployment-outputs.json
+
+# Logs
+*.log
+
+# Legacy clone location left over after the monorepo restructure
+feature_repo/

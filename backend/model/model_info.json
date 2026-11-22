@@ -1,0 +1,15 @@
+{
+  "model_type": "RandomForestClassifier",
+  "n_estimators": 100,
+  "features": [
+    "tenure",
+    "monthly_charges",
+    "total_charges",
+    "senior_citizen"
+  ],
+  "target": "Churn",
+  "mlflow_run_id": "d38dea83b0c142a6be4790c017a1923e",
+  "accuracy_test": 0.742,
+  "trained_at": "2026-10-29",
+  "serialization": "mlflow-sklearn/skops"
+}

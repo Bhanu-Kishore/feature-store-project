@@ -1,0 +1,9 @@
+fastapi==0.141.1
+uvicorn[standard]==0.53.0
+pydantic==2.13.5
+feast==0.66.0
+mlflow-skinny==3.16.1
+scikit-learn==1.9.1
+skops==0.16.0
+pandas==2.3.3
+pyarrow==25.0.1
